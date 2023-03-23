@@ -31,18 +31,3 @@ Start the server (repeat in client directory)
 ```bash
   npm run start
 ```
-
-
-## Prepare build
-
-Go to the project directory (client)
-
-```bash
-  cd hackathon-digital-dynamos/client
-```
-
-Create build
-
-```bash
-  npm run build
-```
