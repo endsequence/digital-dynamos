@@ -1,6 +1,19 @@
 const Hero = require('./hero-model');
 const ReadPreference = require('mongodb').ReadPreference;
 
+function getHero(req, res) {
+  const {id} = req.params;
+  const docquery = Hero.find({_id: id}).read(ReadPreference.NEAREST);
+  docquery
+    .exec()
+    .then(hero => {
+      res.json(hero);
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
+}
+
 function get(req, res) {
   const docquery = Hero.find({}).read(ReadPreference.NEAREST);
   docquery
@@ -53,4 +66,4 @@ function destroy(req, res) {
     });
 }
 
-module.exports = { get, create, update, destroy };
+module.exports = { getHero, get, create, update, destroy };
