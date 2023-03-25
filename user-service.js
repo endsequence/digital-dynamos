@@ -20,7 +20,8 @@ async function login(req, res) {
       message: "success", user: {
         name: user.name,
         email: user.email,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        id: user._id
       }
     });
   }
