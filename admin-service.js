@@ -19,7 +19,7 @@ async function getAllChangeRequests(req, res) {
 
 async function getChangeRequestById(req, res) {
   const { id } = req.params;
-  const query = Requests.find({ id });
+  const query = Requests.find({ _id: id });
 
   try {
     const requests = await query.exec();
@@ -46,7 +46,7 @@ async function processChangeRequest(req, res) {
 }
 
 async function updateInventoryForDevice(deviceId, status) {
-  const query = Inventory.find({ id: deviceId });
+  const query = Inventory.find({ _id: deviceId });
 
   const device = await query.exec();
 
@@ -56,11 +56,11 @@ async function updateInventoryForDevice(deviceId, status) {
 }
 
 async function removeDeviceFromUser(userId, deviceId) {
-  const query = User.find({ id: userId });
+  const query = User.find({ _id: userId });
 
   const user = await query.exec();
 
-  user.devices = user.devices.filter((elem) => elem.id !== deviceId);
+  user.devices = user.devices.filter((elem) => elem._id !== deviceId);
 
   await user.save();
 }

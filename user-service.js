@@ -16,12 +16,13 @@ async function login(req, res) {
   } else {
     const user = users[0];
     res.json({
-      message: "success", user: {
+      message: "success",
+      user: {
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
-        id: user._id
-      }
+        id: user._id,
+      },
     });
   }
 }
@@ -54,26 +55,26 @@ function getUserDetails(req, res) {
 }
 
 function getDevicesByUserId(req, res) {
-  const { id }=req.params;
+  const { id } = req.params;
   User.findOne({ _id: id })
-    .then(user => {
-      const devices=user._doc.devices.toObject();
-      var value=[];
-      var i=0;
-      var keys=Object.keys(devices);
-      for (i=0; i<keys.length; i++) {
+    .then((user) => {
+      const devices = user._doc.devices.toObject();
+      var value = [];
+      var i = 0;
+      var keys = Object.keys(devices);
+      for (i = 0; i < keys.length; i++) {
         //value[i] = new mongo.ObjectID(devices[i]._id);
-        value[i]=devices[i].id.toString();
+        value[i] = devices[i]._id.toString();
       }
-      Inventory.find({ id: { $in: value } })
-        .then(userDevices => {
+      Inventory.find({ _id: { $in: value } })
+        .then((userDevices) => {
           res.json(userDevices);
         })
-        .catch(err => {
+        .catch((err) => {
           res.status(500).send(err);
         });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
 }
