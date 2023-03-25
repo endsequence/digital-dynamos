@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
-const Inventory = require("./inventory-model");
-const Scheama = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const requestsSchema = new Scheama(
+const requestsSchema = new Schema(
   {
     userId: { type: String, required: true },
     reason: { type: String },
-    device: { type: Inventory },
+    device: { type: Object },
     deviceId: { type: String },
     type: { type: String },
   },
