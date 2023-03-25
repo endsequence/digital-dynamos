@@ -1,81 +1,82 @@
-const Inventory=require("./inventory-model.js");
-const Requests=require("./requests-model");
-const User=require("./user-model.js");
-const ReadPreference = require('mongodb').ReadPreference;
-const mongo = require('mongodb');
+const Inventory = require("./inventory-model.js");
+const Requests = require("./requests-model");
+const IdleDevices = require("./idle-devices-model");
+const User = require("./user-model.js");
+const ReadPreference = require("mongodb").ReadPreference;
+const mongo = require("mongodb");
 
 async function login(req, res) {
-  const { password, username }=req.body;
-  const docquery=User.find({}).read(ReadPreference.NEAREST);
-  let users=await docquery.exec();
-  users=JSON.parse(JSON.stringify(users));
-  users=users.filter((user) => user.email===username&&user.pass===password);
-  if (!users.length) { res.status(500).send("Invalid credentials"); }
-  else
-    res.json({ message: 'success' });
+  const { password, username } = req.body;
+  const docquery = User.find({}).read(ReadPreference.NEAREST);
+  let users = await docquery.exec();
+  users = JSON.parse(JSON.stringify(users));
+  users = users.filter(
+    (user) => user.email === username && user.pass === password
+  );
+  if (!users.length) {
+    res.status(500).send("Invalid credentials");
+  } else res.json({ message: "success" });
 }
 
 function getUsers(req, res) {
   const docquery = User.find({}).read(ReadPreference.NEAREST);
   docquery
     .exec()
-    .then(users => {
+    .then((users) => {
       res.json(users);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
 }
 
-
 function getUserDetails(req, res) {
-  const {id} = req.params;
-  const docquery = User.find({_id: id}).read(ReadPreference.NEAREST);
+  const { id } = req.params;
+  const docquery = User.find({ _id: id }).read(ReadPreference.NEAREST);
   docquery
     .exec()
-    .then(data => {
+    .then((data) => {
       res.json(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
-    
 }
 
 function getDevicesByUserId(req, res) {
   const { id } = req.params;
   User.findOne({ _id: id })
-    .then(user => {
+    .then((user) => {
       const devices = user._doc.devices.toObject();
       var value = [];
       var i = 0;
       var keys = Object.keys(devices);
-      for (i =0; i<keys.length; i++) {
-          //value[i] = new mongo.ObjectID(devices[i]._id);
-          value[i] = devices[i].id.toString();
+      for (i = 0; i < keys.length; i++) {
+        //value[i] = new mongo.ObjectID(devices[i]._id);
+        value[i] = devices[i].id.toString();
       }
-      Inventory.find({ id : { $in: value }})
-      .then(userDevices => {
-        res.json(userDevices);
-      })
-      .catch(err => {
-        res.status(500).send(err);
-      });
-  })
-    .catch(err => {
+      Inventory.find({ id: { $in: value } })
+        .then((userDevices) => {
+          res.json(userDevices);
+        })
+        .catch((err) => {
+          res.status(500).send(err);
+        });
+    })
+    .catch((err) => {
       res.status(500).send(err);
     });
 }
 
 function getDeviceDetails(req, res) {
   const { id } = req.params;
-  const query=Inventory.find({ _id : id });
+  const query = Inventory.find({ _id: id });
   query
     .exec()
-    .then(data => {
+    .then((data) => {
       res.json(data);
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
 }
@@ -89,29 +90,67 @@ function addUsers(req, res) {
     .then(() => {
       res.json(user);
     })
-    .catch(err => {
-      res.status(500).send(err);  
+    .catch((err) => {
+      res.status(500).send(err);
     });
 }
 
 function submitToolRequest(req, res) {
   const { id } = req.params;
-  User.find({ _id : id })
-    .then(user => {
+  User.find({ _id: id })
+    .then((user) => {
       user[0]._doc.rewards = (Number(user[0]._doc.rewards) + 100).toString();
       any.save().then(res.json(user));
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send(err);
     });
 }
 
-module.exports={
+async function getIdleTime(req, res) {
+  const { id } = req.params;
+
+  const query = IdleDevices.find({ userId: id });
+
+  try {
+    let deviceList = await query.exec();
+    
+    deviceList = deviceList.reduce((r, a) => {
+      r[a.date] = r[a.date] || [];
+      r[a.date].push(a.idleHours);
+      return r;
+    }, Object.create(null));
+
+    for (key in deviceList) {
+      deviceList[key] = deviceList[key].reduce(
+        (partialSum, a) => partialSum + a,
+        0
+      );
+    }
+
+    res.json(deviceList);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+async function addIdleTime(req, res) {
+  const { deviceId, userId, date, idleHours } = req.body;
+
+  const idleTime = new IdleDevices({ deviceId, userId, date, idleHours });
+
+  const resp = await idleTime.save();
+  res.json(resp);
+}
+
+module.exports = {
   login,
   getUserDetails,
   getDeviceDetails,
   submitToolRequest,
   getUsers,
   addUsers,
-  getDevicesByUserId
+  getDevicesByUserId,
+  getIdleTime,
+  addIdleTime,
 };

@@ -71,4 +71,12 @@ router.get('/user/request/:id', (req, res) => {
   userService.submitToolRequest(req, res);
 });
 
+router.get('/idleTime/:id', (req, res) => {
+  userService.getIdleTime(req, res);
+})
+
+router.post('/addIdleTime', (req, res) => {
+  userService.addIdleTime(req, res);
+})
+
 module.exports = router;
