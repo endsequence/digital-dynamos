@@ -4,14 +4,26 @@ const Requests=require("./requests-model.js");
 const ReadPreference=require('mongodb').ReadPreference;
 
 async function login(req, res) {
-  const { password, username }=req.body;
-  const docquery=User.find({}).read(ReadPreference.NEAREST);
-  let users=await docquery.exec();
-  users=JSON.parse(JSON.stringify(users));
-  users=users.filter((user) => user.email===username&&user.pass===password);
-  if (!users.length) { res.status(500).send("Invalid credentials"); }
-  else
-    res.json({ message: 'success' });
+  const { password, username } = req.body;
+  const docquery = User.find({}).read(ReadPreference.NEAREST);
+  let users = await docquery.exec();
+  users = JSON.parse(JSON.stringify(users));
+  users = users.filter(
+    (user) => user.email === username && user.pass === password
+  );
+  if (!users.length) {
+    res.status(500).send("Invalid credentials");
+  } else {
+    const user = users[0];
+    res.json({
+      message: "success", user: {
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        id: user._id
+      }
+    });
+  }
 }
 
 function getUsers(req, res) {
