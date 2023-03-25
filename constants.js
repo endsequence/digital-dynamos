@@ -1,0 +1,1 @@
+export const API_HOST = 'https://digital-dynamos.azurewebsites.net/api';
