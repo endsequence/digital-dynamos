@@ -1,4 +1,5 @@
 const IdleDevices = require("./idle-devices-model");
+const Inventory = require("./inventory-model");
 
 async function getIdleTime(req, res) {
   const { id } = req.params;
@@ -47,4 +48,40 @@ async function addIdleTime(req, res) {
   res.json(resp);
 }
 
-module.exports = { addIdleTime, getIdleTime };
+async function getInventoryPieChartData(req, res) {
+  const query = Inventory.find({});
+
+  try {
+    const devices = await query.exec();
+
+    const totalDevices = devices.length;
+    let response = [];
+    const statusArray = [];
+
+    if (!devices.length) {
+      res.send(404).send("No devices found");
+    }
+
+    devices.forEach((device) => {
+      if (!statusArray.includes(device["status"])) {
+        statusArray.push(device["status"]);
+        response.push({ name: device["status"], y: 1 });
+      } else {
+        const idx = response.findIndex(
+          (elem) => elem.name === device["status"]
+        );
+        response[idx]["y"] += 1;
+      }
+    });
+
+    response = response.map((el) => {
+      return { name: el.name, y: (el.y / totalDevices) * 100 };
+    });
+
+    res.json(response);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+module.exports = { addIdleTime, getIdleTime, getInventoryPieChartData };

@@ -66,7 +66,9 @@ async function removeDeviceFromUser(userId, deviceId) {
 }
 
 async function getInventory(req, res) {
-  const query = Inventory.find({});
+  const { status } = req.body;
+
+  const query = status ? Inventory.find({ status }) : Inventory.find({});
 
   try {
     let inventory = await query.exec();

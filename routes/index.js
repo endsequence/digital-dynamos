@@ -42,7 +42,7 @@ router.get("/requests/:id", (req, res) => {
   adminService.getChangeRequestById(req, res);
 });
 
-router.post('/login', (req, res) => {
+router.post("/login", (req, res) => {
   userService.login(req, res);
 });
 
@@ -76,6 +76,10 @@ router.get("/idleTime/:id", (req, res) => {
 
 router.post("/addIdleTime", (req, res) => {
   graphService.addIdleTime(req, res);
+});
+
+router.get("/getPieChartData", (req, res) => {
+  graphService.getInventoryPieChartData(req, res);
 });
 
 module.exports = router;
