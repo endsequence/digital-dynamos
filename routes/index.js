@@ -9,6 +9,10 @@ router.get('/heroes', (req, res) => {
   heroesService.get(req, res);
 });
 
+router.get('/hero/:id', (req, res) => {
+  heroesService.getHero(req, res);
+});
+
 router.put('/hero', (req, res) => {
   heroesService.create(req, res);
 });

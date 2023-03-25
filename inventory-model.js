@@ -11,6 +11,7 @@ const inventorySchema = new Schema(
     acquiredDate: { type: Date, required: true },
     status: { type: String, required: true },
     isAllocated: { type: String, required: true },
+    imgUrl: { type: String },
   },
   { autoIndex: true }
 );

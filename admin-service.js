@@ -34,7 +34,66 @@ async function getChangeRequestById(req, res) {
   }
 }
 
-function processChangeRequest(req, res) {}
+async function processChangeRequest(req, res) {
+  const { score, userId, deviceId, type } = req.body;
+
+  let status;
+
+  if (type === "P") {
+    status = "RECYCLE";
+  } else if (score >= 8) {
+    status = "RETURN";
+  } else if (score >= 6 && score < 8) {
+    status = "REPAIR";
+  } else if (score >= 4 && score < 6) {
+    status = "DONATE";
+  } else if (score >= 2 && score < 4) {
+    status = "SELL";
+  } else {
+    status = "RECYCLE";
+  }
+
+  if (status !== "RETURN") {
+    await removeDeviceFromUser(userId, deviceId);
+    await updateInventoryForDevice(deviceId, status);
+  }
+
+  if (status === "RECYCLE" && type === "P") {
+    await updateRewardsForUser(userId);
+  }
+
+  res.json({ status });
+}
+
+async function updateRewardsForUser(userId) {
+  const query = User.find({ id: userId });
+
+  const user = await query.exec();
+
+  user.rewards += 50;
+  await user.save();
+}
+
+async function updateInventoryForDevice(deviceId, status) {
+  const inventoryQuery = Inventory.find({ id: deviceId });
+
+  const device = await inventoryQuery.exec();
+
+  device.status = status;
+  device.isAllocated = 0;
+
+  await device.save();
+}
+
+async function removeDeviceFromUser(userId, deviceId) {
+  const query = User.find({ id: userId });
+
+  const user = await query.exec();
+
+  user.devices = user.devices.filter((elem) => elem.id !== deviceId);
+
+  await user.save();
+}
 
 async function getInventory(req, res) {
   const query = Inventory.find({ isAllocated: 1 });
@@ -61,6 +120,7 @@ async function addDevice(req, res) {
     acquiredDate,
     status,
     isAllocated,
+    imgUrl,
   } = req.body;
 
   const id = name + Date.now();
@@ -74,6 +134,7 @@ async function addDevice(req, res) {
       acquiredDate,
       status,
       isAllocated,
+      imgUrl,
     });
 
     const response = await device.save();
