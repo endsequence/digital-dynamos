@@ -22,15 +22,17 @@ async function getIdleTime(req, res) {
     }
 
     const idleHours = [];
+    let totalIdleHours = 0;
     for (key in deviceList) {
       const temp = [];
       const date = key.split("/");
       const dateTimestamp = new Date(date[2], date[1] - 1, date[0]).getTime();
+      totalIdleHours += deviceList[key];
       temp.push(dateTimestamp, deviceList[key]);
       idleHours.push(temp);
     }
 
-    res.json({ idleHours });
+    res.json({ idleHours, totalIdleHours });
   } catch (err) {
     res.status(500).send(err);
   }
