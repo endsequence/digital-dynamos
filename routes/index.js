@@ -24,4 +24,16 @@ router.get('/inventory', (req, res) => {
   adminService.getInventory(req, res);
 })
 
+router.post('/device', (req,res) => {
+  adminService.addDevice(req, res)
+})
+
+router.get('/requests', (req, res) => {
+  adminService.getAllChangeRequests(req, res);
+})
+
+router.get('/requests/:id', (req, res) => {
+  adminService.getChangeRequestById(req, res);
+})
+
 module.exports = router;
