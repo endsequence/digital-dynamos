@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const inventorySchema = new Schema(
   {
+    id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     ownerType: { type: String, required: true },
     carbonFootprint: { type: Number, required: true },

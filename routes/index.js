@@ -3,6 +3,7 @@ const router = express.Router();
 
 const heroesService = require('../hero-service');
 const adminService = require('../admin-service')
+const userService = require('../user-service')
 
 router.get('/heroes', (req, res) => {
   heroesService.get(req, res);
@@ -35,5 +36,35 @@ router.get('/requests', (req, res) => {
 router.get('/requests/:id', (req, res) => {
   adminService.getChangeRequestById(req, res);
 })
+
+router.get('/login', (req, res) => {
+  userService.login(req, res);
+})
+
+
+router.get('/user', (req, res) => {
+  userService.getUsers(req, res);
+});
+
+router.put('/user', (req,res) => {
+  userService.addUsers(req, res)
+})
+
+router.get('/user/:id', (req, res) => {
+  userService.getUserDetails(req, res);
+})
+
+router.get('/user/device/:id', (req, res) => {
+  userService.getDevicesByUserId(req, res);
+})
+
+router.get('/device/:id', (req, res) => {
+  userService.getDeviceDetails(req, res);
+})
+
+
+router.get('/user/request/:id', (req, res) => {
+  userService.submitToolRequest(req, res);
+});
 
 module.exports = router;

@@ -63,8 +63,10 @@ async function addDevice(req, res) {
     isAllocated,
   } = req.body;
 
+  const id = name + Date.now();
   try {
     const device = new Inventory({
+      id,
       name,
       ownerType,
       carbonFootprint,
