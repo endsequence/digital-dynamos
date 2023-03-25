@@ -10,10 +10,9 @@ const inventorySchema = new Schema(
     useByDate: { type: Date, required: true },
     acquiredDate: { type: Date, required: true },
     status: { type: String, required: true },
-    isAllocated: { type: String, required: true },
     imgUrl: { type: String },
   },
-  { autoIndex: true }
+  { autoIndex: false }
 );
 
 const Inventory = mongoose.model("Inventory", inventorySchema);
