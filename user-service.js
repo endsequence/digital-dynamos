@@ -15,7 +15,16 @@ async function login(req, res) {
   );
   if (!users.length) {
     res.status(500).send("Invalid credentials");
-  } else res.json({ message: "success" });
+  } else {
+    const user = users[0];
+    res.json({
+      message: "success", user: {
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin
+      }
+    });
+  }
 }
 
 function getUsers(req, res) {
@@ -114,7 +123,7 @@ async function getIdleTime(req, res) {
 
   try {
     let deviceList = await query.exec();
-    
+
     deviceList = deviceList.reduce((r, a) => {
       r[a.date] = r[a.date] || [];
       r[a.date].push(a.idleHours);
