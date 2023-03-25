@@ -42,7 +42,7 @@ router.get("/requests/:id", (req, res) => {
   adminService.getChangeRequestById(req, res);
 });
 
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
   userService.login(req, res);
 })
 
