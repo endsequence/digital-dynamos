@@ -11,7 +11,7 @@ const requestsSchema = new Schema(
     type: { type: String },
     status: { type: String, default: "PENDING", required: true },
   },
-  { autoIndex: false }
+  { autoIndex: true }
 );
 
 const Requests = mongoose.model("Requests", requestsSchema);

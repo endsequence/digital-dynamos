@@ -12,7 +12,7 @@ const inventorySchema = new Schema(
     status: { type: String, required: true },
     imgUrl: { type: String },
   },
-  { autoIndex: false }
+  { autoIndex: true }
 );
 
 const Inventory = mongoose.model("Inventory", inventorySchema);
