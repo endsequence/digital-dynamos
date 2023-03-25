@@ -1,6 +1,5 @@
 const Inventory = require("./inventory-model.js");
 const Requests = require("./requests-model");
-const IdleDevices = require("./idle-devices-model");
 const User = require("./user-model.js");
 const ReadPreference = require("mongodb").ReadPreference;
 const mongo = require("mongodb");
@@ -107,42 +106,6 @@ function submitToolRequest(req, res) {
     });
 }
 
-async function getIdleTime(req, res) {
-  const { id } = req.params;
-
-  const query = IdleDevices.find({ userId: id });
-
-  try {
-    let deviceList = await query.exec();
-    
-    deviceList = deviceList.reduce((r, a) => {
-      r[a.date] = r[a.date] || [];
-      r[a.date].push(a.idleHours);
-      return r;
-    }, Object.create(null));
-
-    for (key in deviceList) {
-      deviceList[key] = deviceList[key].reduce(
-        (partialSum, a) => partialSum + a,
-        0
-      );
-    }
-
-    res.json(deviceList);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-}
-
-async function addIdleTime(req, res) {
-  const { deviceId, userId, date, idleHours } = req.body;
-
-  const idleTime = new IdleDevices({ deviceId, userId, date, idleHours });
-
-  const resp = await idleTime.save();
-  res.json(resp);
-}
-
 module.exports = {
   login,
   getUserDetails,
@@ -151,6 +114,4 @@ module.exports = {
   getUsers,
   addUsers,
   getDevicesByUserId,
-  getIdleTime,
-  addIdleTime,
 };
