@@ -5,6 +5,7 @@ const heroesService = require("../hero-service");
 const adminService = require("../admin-service");
 const userService = require("../user-service");
 const graphService = require("../graph-service");
+const gptService = require("../gpt-service");
 
 router.get("/heroes", (req, res) => {
   heroesService.get(req, res);
@@ -89,6 +90,18 @@ router.get("/idleTime/:id", (req, res) => {
 router.post("/addIdleTime", (req, res) => {
   graphService.addIdleTime(req, res);
 });
+
+router.post("/askGpt", (req, res) => {
+  gptService.askGpt(req, res);
+});
+
+router.post("/gptQuiz", (req, res) => {
+  gptService.getQuiz(req, res);
+});
+
+router.post("/verifyAnswer", (req, res) => {
+  gptService.verifyAnswer(req, res);
+})
 
 router.get("/getPieChartData", (req, res) => {
   graphService.getInventoryPieChartData(req, res);
