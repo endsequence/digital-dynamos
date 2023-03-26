@@ -43,7 +43,7 @@ router.get("/requests/:id", (req, res) => {
   adminService.getChangeRequestById(req, res);
 });
 
-router.post('/login', (req, res) => {
+router.post("/login", (req, res) => {
   userService.login(req, res);
 })
 
@@ -101,6 +101,10 @@ router.post("/gptQuiz", (req, res) => {
 
 router.post("/verifyAnswer", (req, res) => {
   gptService.verifyAnswer(req, res);
+})
+
+router.get("/getPieChartData", (req, res) => {
+  graphService.getInventoryPieChartData(req, res);
 });
 
 module.exports = router;

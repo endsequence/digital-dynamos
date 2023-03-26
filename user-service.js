@@ -64,9 +64,9 @@ function getDevicesByUserId(req, res) {
       var keys = Object.keys(devices);
       for (i = 0; i < keys.length; i++) {
         //value[i] = new mongo.ObjectID(devices[i]._id);
-        value[i] = devices[i]._id.toString();
+        value[i] = devices[i].id.toString();
       }
-      Inventory.find({ _id: { $in: value } })
+      Inventory.find({ id: { $in: value } })
         .then((userDevices) => {
           res.json(userDevices);
         })
