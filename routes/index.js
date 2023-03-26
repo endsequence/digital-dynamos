@@ -95,6 +95,10 @@ router.post("/askGpt", (req, res) => {
   gptService.askGpt(req, res);
 });
 
+router.post("/getGptResponse", (req, res) => {
+  gptService.getGptResponse(req, res);
+});
+
 router.post("/gptQuiz", (req, res) => {
   gptService.getQuiz(req, res);
 });
