@@ -68,33 +68,30 @@ async function processChangeRequest(req, res) {
 }
 
 async function updateRequestStatus(status, requestId) {
-  const query = Requests.find({ _id: requestId });
-
-  const request = await query.exec();
-
-  request.status = status;
-
-  await request.save();
+  Requests.findOne({ _id: requestId }).then((request) => {
+    request.status = status;
+    request.save().then(() => {
+      return { message: "OK" };
+    });
+  });
 }
 
 async function updateInventoryForDevice(deviceId, status) {
-  const query = Inventory.find({ _id: deviceId });
-
-  const device = await query.exec();
-
-  device.status = status;
-
-  await device.save();
+  Inventory.findOne({ _id: deviceId }).then((device) => {
+    device.status = status;
+    device.save().then(() => {
+      return { message: "OK" };
+    });
+  });
 }
 
 async function removeDeviceFromUser(userId, deviceId) {
-  const query = User.find({ _id: userId });
-
-  const user = await query.exec();
-
-  user.devices = user.devices.filter((elem) => elem._id !== deviceId);
-
-  await user.save();
+  User.findOne({ _id: userId }).then((user) => {
+    user.devices = user.devices.filter((device) => device["_id"] !== deviceId);
+    user.save().then(() => {
+      return { message: "OK" };
+    });
+  });
 }
 
 async function getInventory(req, res) {
