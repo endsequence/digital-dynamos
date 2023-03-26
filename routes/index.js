@@ -27,7 +27,7 @@ router.delete("/hero/:id", (req, res) => {
   heroesService.destroy(req, res);
 });
 
-router.get("/inventory", (req, res) => {
+router.post("/inventory", (req, res) => {
   adminService.getInventory(req, res);
 });
 
@@ -45,37 +45,37 @@ router.get("/requests/:id", (req, res) => {
 
 router.post("/login", (req, res) => {
   userService.login(req, res);
-})
+});
 
-router.get('/user', (req, res) => {
+router.get("/user", (req, res) => {
   userService.getUsers(req, res);
 });
 
-router.put('/user', (req,res) => {
-  userService.addUsers(req, res)
-})
+router.put("/user", (req, res) => {
+  userService.addUsers(req, res);
+});
 
-router.get('/user/:id', (req, res) => {
+router.get("/user/:id", (req, res) => {
   userService.getUserDetails(req, res);
-})
+});
 
-router.get('/user/device/:id', (req, res) => {
+router.get("/user/device/:id", (req, res) => {
   userService.getDevicesByUserId(req, res);
-})
+});
 
-router.get('/device/:id', (req, res) => {
+router.get("/device/:id", (req, res) => {
   userService.getDeviceDetails(req, res);
-})
+});
 
-router.get('/insights', (req, res) => {
+router.get("/insights", (req, res) => {
   userService.getInsights(req, res);
-})
+});
 
-router.delete('/user/:id', (req, res) => {
+router.delete("/user/:id", (req, res) => {
   userService.destroy(req, res);
 });
 
-router.get('/user/request/:id', (req, res) => {
+router.get("/user/request/:id", (req, res) => {
   userService.submitToolRequest(req, res);
 });
 
@@ -101,10 +101,14 @@ router.post("/gptQuiz", (req, res) => {
 
 router.post("/verifyAnswer", (req, res) => {
   gptService.verifyAnswer(req, res);
-})
+});
 
 router.get("/getPieChartData", (req, res) => {
   graphService.getInventoryPieChartData(req, res);
+});
+
+router.post("/processRequest", (req, res) => {
+  adminService.processChangeRequest(req, res);
 });
 
 module.exports = router;
