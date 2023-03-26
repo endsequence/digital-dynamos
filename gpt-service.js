@@ -7,6 +7,10 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+const getGptResponse = async (req,res) => {
+    const resp = await askGpt(req.body.ques);
+    res.send(resp)
+}
 
 const askGpt = async (ques) => {
     let finalData = '';
@@ -67,12 +71,12 @@ const prepareQuiz = async (ques) => {
     const gptResp = await askGpt(ques);
     const contentArr = gptResp.split('\n').filter(item => item !== "");
     const arrayLength = contentArr.length;
-    const question = arrayLength === 7 ? `${contentArr[0]} ${contentArr[1]}` :  contentArr[0];
-    const options = [contentArr[arrayLength-5], contentArr[arrayLength-4], contentArr[arrayLength-3], contentArr[arrayLength-2]];
+    const question = arrayLength === 7 ? `${contentArr[0]} ${contentArr[1]}` : contentArr[0];
+    const options = [contentArr[arrayLength - 5], contentArr[arrayLength - 4], contentArr[arrayLength - 3], contentArr[arrayLength - 2]];
 
-    const anwserFull = contentArr[arrayLength-1];
-    const anwser = anwserFull?.includes(')') ? anwserFull?.split(')')[0] :anwserFull?.charAt(0);
-    console.log({ gptResp,options, anwser, contentArr, length: contentArr.length });
+    const anwserFull = contentArr[arrayLength - 1];
+    const anwser = anwserFull?.includes(')') ? anwserFull?.split(')')[0] : anwserFull?.charAt(0);
+    console.log({ gptResp, options, anwser, contentArr, length: contentArr.length });
     return { contentArr, question, anwserFull, anwser, options }
 }
 
@@ -97,4 +101,4 @@ const verifyAnswer = async (req, res) => {
     }
     res.send({ isCorrect, correctAnswer })
 }
-module.exports = { askGpt, getQuiz, verifyAnswer };
+module.exports = { askGpt, getQuiz, verifyAnswer,getGptResponse };
