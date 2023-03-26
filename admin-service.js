@@ -1,15 +1,35 @@
 const Inventory = require("./inventory-model");
 const Requests = require("./requests-model");
+const User = require("./user-model");
 
 async function getAllChangeRequests(req, res) {
   const query = Requests.find({});
+  const userQuery = User.find({});
+  const devicesQuery = Inventory.find({});
 
   try {
-    const requests = await query.exec();
+    let requests = await query.exec();
+    const users = await userQuery.exec();
+    const devices = await devicesQuery.exec();
 
     if (!requests.length) {
       res.status(404).send("No requests found.");
     } else {
+      requests = requests.map((request) => {
+        const userIdx = users.findIndex(
+          (user) => `${user["_id"]}` === request["userId"]
+        );
+        const deviceIdx = devices.findIndex(
+          (device) => `${device["_id"]}` === request["deviceId"]
+        );
+
+        console.log({ userIdx, deviceIdx });
+        return {
+          ...request._doc,
+          userName: users[userIdx].name,
+          deviceName: devices[deviceIdx].name,
+        };
+      });
       res.json(requests);
     }
   } catch (err) {
@@ -35,14 +55,26 @@ async function getChangeRequestById(req, res) {
 }
 
 async function processChangeRequest(req, res) {
-  const { status, userId, deviceId } = req.body;
+  const { status, userId, deviceId, requestId } = req.body;
 
   if (status !== "REJECTED") {
     await removeDeviceFromUser(userId, deviceId);
     await updateInventoryForDevice(deviceId, status);
   }
 
+  await updateRequestStatus(status, requestId);
+
   res.json({ message: "OK" });
+}
+
+async function updateRequestStatus(status, requestId) {
+  const query = Requests.find({ _id: requestId });
+
+  const request = await query.exec();
+
+  request.status = status;
+
+  await request.save();
 }
 
 async function updateInventoryForDevice(deviceId, status) {
